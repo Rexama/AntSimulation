@@ -7,50 +7,43 @@ namespace AntBase
     {
         public float speed = 2;
         public float rotationSpeed = 2;
-        public float wanderWeight = 5;
 
 
-        private Vector2 position;
-        private Vector2 velocity;
-        private Vector2 randomForward;
+        private Vector2 _position;
+        private Vector2 _velocity;
+        private Vector2 _randomForward;
         
-        private bool isRotating = false;
+        private bool _isRotating = false;
 
         private void FixedUpdate()
         {
-            // var desiredForward = (forward + (Vector2) UnityEngine.Random.insideUnitSphere.normalized * wanderWeight).normalized;
-            //
-            //
-            // forward = Vector2.Lerp(forward, desiredForward, rotationSpeed);
-            // Debug.DrawRay(transform.position, forward, Color.red);
-            //
-            // velocity = forward * speed;
-            // position += velocity;
+            RandomWalk();
+        }
 
-            if (isRotating)
+        private void RandomWalk()
+        {
+            if (_isRotating)
             {
-                //.Log((Vector2)transform.right.normalized + " " + randomForward.normalized);
-                
-                var differenceX = Math.Abs(transform.right.normalized.x - randomForward.normalized.x);
-                var differenceY = Math.Abs(transform.right.normalized.y - randomForward.normalized.y);
-                if(differenceX < 0.02f && differenceY < 0.02f)
+                var right = transform.right;
+                var differenceX = Math.Abs(right.normalized.x - _randomForward.normalized.x);
+                var differenceY = Math.Abs(right.normalized.y - _randomForward.normalized.y);
+
+                if (differenceX < 0.02f && differenceY < 0.02f)
                 {
-                    Debug.Log(differenceX + " " + differenceY);
-                    Debug.Log((Vector2)transform.right.normalized + " " + randomForward.normalized);
-                    isRotating = false;
+                    _isRotating = false;
                 }
                 else
                 {
-                    transform.right = Vector2.Lerp(transform.right, randomForward, rotationSpeed);
+                    transform.right = Vector2.Lerp(transform.right, _randomForward, rotationSpeed);
                 }
             }
             else
             {
-                randomForward = (UnityEngine.Random.insideUnitSphere.normalized * wanderWeight).normalized;
-                isRotating = true;
+                _randomForward = (UnityEngine.Random.insideUnitSphere.normalized).normalized;
+                _isRotating = true;
             }
-            
-            var newPos = transform.position + (Vector3)transform.right * speed;
+
+            var newPos = transform.position + transform.right * speed;
             transform.position = newPos;
         }
     }
